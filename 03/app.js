@@ -6,22 +6,25 @@ const url= require('url');
 const html = fs.readFileSync('./Tameplate/index.html','utf-8')
 let products=JSON.parse(fs.readFileSync('./Data/product.json','utf-8'));
 let productListHtml=fs.readFileSync('./Tameplate/product-list.html','utf-8');
-let productHtmlArray=products.map((prod)=> {
-    let output=productListHtml.replace('{{IMAGE}}',prod.productImage);
-    output=output.replace('{{%NAME%}}',prod.name);
-    output=output.replace('{{%MODELNO%}}',prod.modelNumber);
-    output=output.replace('{{%SIZE%}}',prod.size);
-    output=output.replace('{{%CAMERA%}}',prod.camera);
-    output=output.replace('{{%IMAGE%}}',prod.productImage);
-    output=output.replace('{{%PRICE%}}',prod.price);
-    output=output.replace('{{%COLOR%}}',prod.color);
-    output=output.replace('{{%ID%}}',prod.id);
+let productDetailsHtml=fs.readFileSync('./Tameplate/product-details.html','utf-8');
+function replaceHtml(template,product) {
+    let output=template.replace('{{IMAGE}}',product.productImage);
+    output=output.replace('{{%NAME%}}',product.name);
+    output=output.replace('{{%MODELNO%}}',product.modelNumber);
+    output=output.replace('{{%MODELNAME%}}',product.modeName)
+    output=output.replace('{{%SIZE%}}',product.size);
+    output=output.replace('{{%CAMERA%}}',product.camera);
+    output=output.replace('{{%IMAGE%}}',product.productImage);
+    output=output.replace('{{%PRICE%}}',product.price);
+    output=output.replace('{{%COLOR%}}',product.color);
+    output=output.replace('{{%ID%}}',product.id);
+    output=output.replace('{{%ROM%}}',product.ROM);
+    output=output.replace('{{%DESC%}}',product.Description);
     return output;
-})
+}
 const server=http.createServer((request,response)=> {
     let {query,pathname:path}=url.parse(request.url,true);
     //let path=request.url;
-    console.log(productHtmlArray.join(','));
     console.log(query);
     if(path==='/'||path.toLocaleLowerCase()==='/home') {
         response.writeHead(200,{
@@ -43,11 +46,17 @@ const server=http.createServer((request,response)=> {
         response.end(html.replace('{{%CONTENT%}}','You are in contact page'));
     } else if(path.toLocaleLowerCase()==='/product') {
         if(!query.id) {
-        let productResponseHtml= html.replace('{{%CONTENT%}}',productHtmlArray.join(','))
-        response.writeHead(200,{'Content-Type':'text/html',})
+        let productHtmlArray=products.map((prod) =>  {
+            return replaceHtml(productListHtml,prod)
+        })
+        console.log(productHtmlArray);
+        let productResponseHtml= html.replace('{{%CONTENT%}}',productHtmlArray.join(' '))
+        response.writeHead(200,{'Content-Type':'text/html'})
         response.end(productResponseHtml);
         } else {
-            response.end('This is produce with id='+query.id)
+            let prod=products[query.id];
+            let producsDetailsRespone=replaceHtml(productDetailsHtml,prod)
+            response.end(html.replace('{{%CONTENT%}}',producsDetailsRespone))
         }
     } else {
         response.writeHead(404,{
