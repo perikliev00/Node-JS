@@ -15,6 +15,7 @@ const requestHandler = (req,res) => {
             console.log(chunk);
             body.push(chunk);
         });
+    
         return req.on('end', () => {
             const parseBody = Buffer.concat(body).toString();
             const message = parseBody.split('=')[1];
@@ -25,6 +26,7 @@ const requestHandler = (req,res) => {
                 return res.end();
             });
         });
+
     } 
     res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
