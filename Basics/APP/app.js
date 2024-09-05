@@ -1,19 +1,11 @@
 const express=require('express');
-
+const bodyParser=require("body-parser");
 const app=express();
-app.use('/',(req,res,next) => {
-    console.log('This always runs');
-    next();
-})
-app.use('/add-product' ,(req,res,next) => {
-    console.log("In another middlewere!");
-    res.send('<h1>Hello from product page</h1>')
-    // ....
-});
-app.use('/' ,(req,res,next) => {
-    console.log("In another middlewere!");
-    res.send('<h1>Hello from Express</h1>')
-    // ....
-});
+const routesAdmin=require('./Routes/admin');
+const routesShop=require('./Routes/shop');
+
+app.use(routesAdmin);
+
+app.use(routesShop);
 
 app.listen(3000);
