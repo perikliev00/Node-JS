@@ -1,16 +1,24 @@
 const express=require("express");
 
+const rootDir=require('../utill/path');
+
+const path=require('path');
+
 const bodyParser=require('body-parser');
 
 const router=express.Router();
 
 router.use(bodyParser.urlencoded({extended:false}));
 
+//   /admin/add-product => GET
+
 router.get('/add-product' ,(req,res,next) => {
-    res.send('<form method="POST" action="/product"><input type="text" name="tittle"><button type="submit">Add product</button></form>')
+    res.sendFile(path.join(rootDir,'views','add-product.html'))
 });
 
-router.post('/product',(req,res,next) => {
+//   /admin/add-product => POST
+
+router.post('/add-product',(req,res,next) => {
     console.log(req.body);
     res.redirect('/');
 })
