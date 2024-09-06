@@ -2,12 +2,16 @@ const path=require('path');
 
 const rootDir=require('../utill/path');
 
+const adminRouter=require('./admin');
+
 const express=require('express');
 
-const routes=express.Router();
+const router=express.Router();
 
-routes.get('/' ,(req,res,next) => {
-    res.sendFile(path.join(rootDir,'views','shop.html'))
+router.get('/' ,(req,res,next) => {
+    res.render('shop');
+    console.log(adminRouter.products)
 });
 
-module.exports=routes;
+
+module.exports=router;

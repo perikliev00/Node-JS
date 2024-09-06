@@ -8,6 +8,8 @@ const bodyParser=require('body-parser');
 
 const router=express.Router();
 
+const products=[];
+
 router.use(bodyParser.urlencoded({extended:false}));
 
 //   /admin/add-product => GET
@@ -20,7 +22,11 @@ router.get('/add-product' ,(req,res,next) => {
 
 router.post('/add-product',(req,res,next) => {
     console.log(req.body);
+    products.push({tittle:req.body.tittle});
     res.redirect('/');
 })
 
-module.exports = router;
+module.exports = {
+    router,
+    products
+}
