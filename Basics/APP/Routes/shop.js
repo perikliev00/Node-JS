@@ -9,8 +9,10 @@ const express=require('express');
 const router=express.Router();
 
 router.get('/' ,(req,res,next) => {
-    res.render('shop');
-    console.log(adminRouter.products)
+    const products=adminRouter.products;
+    console.log(products);
+    res.render('shop',{prods:products,tittle:"shop"});
+    // console.log(adminRouter.products)
 });
 
 
