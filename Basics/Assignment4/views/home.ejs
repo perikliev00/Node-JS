@@ -1,0 +1,12 @@
+<%- include('includes/head.ejs') %>
+    <link rel="stylesheet" href="styles/home.css">
+</head>
+<body>
+    <h1>Hello to my page</h1>
+    <form name="users-form" action="/" method="POST">
+        <label for="users-form">
+        <input type="text" name="user"><br/>
+        <button class="btn" type="submit">Submit user</button>
+        </label>
+    </form>
+    <%- include('includes/end.ejs') %>

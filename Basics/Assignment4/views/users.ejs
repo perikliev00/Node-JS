@@ -1,0 +1,21 @@
+<%- include('includes/head.ejs') %>
+    <link rel="stylesheet" href="/styles/user.css">
+</head>
+<body>
+    <h1>Users names list</h1>
+    <% if(users.length > 0) { %>
+        <div class="users-available">
+    <ul>
+        <% for(let user of users) {%>
+        <li><%= user %></li>
+        <% }%>
+        <a href="/">Back to Home Page</a>
+    </ul>
+        </div>
+        <% }else { %>
+            <div class="users-not-available">
+            <p>No users</p>
+            <a href="/">Back to Home Page</a>
+            </div>
+            <% } %>
+<%- include('includes/end.ejs')%>;
