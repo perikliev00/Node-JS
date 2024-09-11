@@ -8,6 +8,10 @@ const adminController = require('../controllers/admin');
 
 const router=express.Router();
 
+const bodyParser=require('body-parser')
+
+router.use(bodyParser.urlencoded({extended:false}));
+
 // /admin/add-product => GET
 
 router.get('/add-product',adminController.getAddProduct);

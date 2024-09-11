@@ -110,6 +110,12 @@ main {
   background-color: #00695c;
   color: white;
 }
-.product__tittle {
+.product__title {
     text-align: center;
+}
+.product__price {
+  text-align: center;
+}
+.product__description {
+  text-align: center;
 }
