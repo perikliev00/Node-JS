@@ -1,19 +1,36 @@
+const { path } = require('chromium');
 const Product = require('../models/product')
 
 exports.getProducts = (req, res, next) => {
     Product.fetchAll(products => {
         res.render('shop/product-list', {
             prods:products,
-            tittle: "All products",
+            pageTitle: "All products",
             path: '/products',
         })
     })
 };
+
+exports.getProduct = (req ,res, next) => {
+    const prodId = req.params.productId;
+    Product.findById(prodId,product => {
+        console.log(product);
+    })
+    console.log(prodId);
+    Product.findById(prodId,product => {
+        res.render('shop/product-detail',{
+            prod:product,
+            pageTitle: product.title,
+            path:'/products'
+        })
+    })
+}
+
 exports.getIndex = (req, res, next) => {
     Product.fetchAll(products => {
         res.render('shop/index', {
             prods:products,
-            tittle: "Shop",
+            pageTitle: products.title,
             path: '/',
         })
     })
@@ -22,13 +39,20 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res ,next) => {
     res.render('shop/cart', {
         path: '/cart',
-        tittle: 'Your Cart'
+        pageTitle: 'Your Cart'
+    });
+};
+
+exports.getOrders = (req, res ,next) => {
+    res.render('shop/orders', {
+        path: '/orders',
+        pageTitle: 'Your Orders'
     });
 };
 
 exports.getCheckout = (req,res,next) => {
     res.render('shop/checkout', {
         path: '/checkout',
-        tittle: 'Checkout'
-    });
-};
+        pageTitle: 'Checkout'
+    })
+}
