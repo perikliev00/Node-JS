@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const p = path.join(
-  path.dirname(process.mainModule.filename),
+  path.dirname(require.main.filename),
   'data',
   'cart.json'
 );
@@ -64,6 +64,16 @@ module.exports = class Cart {
     fs.readFile(p, (err, fileContent) => {
       const cart = JSON.parse(fileContent);
       if (err) {
+        cb(null);
+      } else {
+        cb(cart);
+      }
+    });
+  }
+  static getProducts(cb) {
+    fs.readFile(p,(err,fileContent) => {
+      const cart=JSON.parse(fileContent);
+      if(err) {
         cb(null);
       } else {
         cb(cart);
