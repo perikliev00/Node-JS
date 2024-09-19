@@ -55,23 +55,26 @@ Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, {through: CartItem});
 
 sequelize
-.sync()
-.then(result => {
+  .sync({ force: true })
+  // .sync()
+  .then(result => {
     return User.findByPk(1);
-    console.log(result);
-})
-.then(user => {
-    if(!user) {
-        return User.create({name:'Max', email: 'test@test.com'});
+    // console.log(result);
+  })
+  .then(user => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
     }
     return user;
-})
-.then(user => {
-    return user.createCart();
-})
-.then(cart => {
+  })
+  .then(user => {
+    const cart=user.createCart();
+    return cart
+  }) 
+  .then(cart => {
+    // console.log(user);
     app.listen(3000);
-})
-.catch(err => {
-    console.log(err)
-})
+  })
+  .catch(err => {
+    console.log(err);
+  });
