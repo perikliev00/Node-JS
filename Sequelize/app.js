@@ -16,7 +16,9 @@ const Cart = require('./models/cart');
 
 const CartItem = require('./models/cart-item');
 
-const Sequelize = require('sequelize');
+const Order = require('./models/order');
+
+const OrderItem = require('./models/order-item')
 
 const app=express();
 
@@ -27,8 +29,9 @@ app.set('views','views')
 const routesAdmin=require('./Routes/admin');
 
 const routesShop=require('./Routes/shop');
+const { FORCE } = require('sequelize/lib/index-hints');
 
-
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname,'public')))
 
 app.use((req,res,next)=> {
@@ -55,25 +58,31 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, {through: CartItem});
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, {through:OrderItem});
 
 sequelize
-.sync({force:true})
-.then(result => {
+  .sync()
+  // .sync()
+  .then(result => {
     return User.findByPk(1);
-    console.log(result);
-})
-.then(user => {
-    if(!user) {
-        return User.create({name:'Max', email: 'test@test.com'});
+    // console.log(result);
+  })
+  .then(user => {
+    if (!user) {
+      return User.create({ name: 'Max', email: 'test@test.com' });
     }
     return user;
-})
-.then(user => {
-    return user.createCart();
-})
-.then(cart => {
+  })
+  .then(user => {
+    const cart=user.createCart();
+    return cart
+  }) 
+  .then(cart => {
+    // console.log(user);
     app.listen(3000);
-})
-.catch(err => {
-    console.log(err)
-})
+  })
+  .catch(err => {
+    console.log(err);
+  });
