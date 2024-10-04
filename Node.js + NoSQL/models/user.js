@@ -70,9 +70,43 @@ class User  {
             console.log(err)
         });
     }
+
+    addOrder() {
+        const db = getDb();
+        return this.getCart().then(products => {
+            const order = {
+                items:products,
+                users: {
+                    _id: new ObjectId(this._id),
+                    name: this.name
+                }
+            }
+            return db
+            .collection('orders')
+            .insertOne(order)
+        })        
+        .then(result => {
+            this.cart = { items: []  };
+            return db 
+                .collection('users')
+                .updateOne(
+                    {_id: new ObjectId(this._id)},
+                    { $set: { cart: { items: [] } } }
+                );
+        });
+    }
+
+    getOrders() {
+        const db = getDb();
+        return db
+          .collection('orders')
+          .find({ 'users._id': new ObjectId(this._id) })
+          .toArray();
+      }
+
     deleteById(productId) {
        let updatedItems=this.cart.items.filter(item => {
-        item.productId.toString() != productId.toString();
+        return item.productId.toString() != productId.toString();
        })
        const db=getDb();
        return db
