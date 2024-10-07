@@ -1,37 +1,71 @@
-const path = require('path');
+const express=require('express');
 
-const express = require('express');
-const bodyParser = require('body-parser');
+const path=require('path');
 
-const errorController = require('./controllers/error');
-const mongoConnect = require('./util/database').mongoConnect;
-const User = require('./models/user');
+const bodyParser=require("body-parser");
 
-const app = express();
+const errorControler = require('./controllers/error');
+const mongoConnect = require('./utill/database').mongoConnect;
 
-app.set('view engine', 'ejs');
-app.set('views', 'views');
+const User=require('./models/user')
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
+const app=express();
+
+app.set('view engine','ejs');
+
+app.set('views','views')
+
+const routesAdmin=require('./Routes/admin');
+
+const routesShop=require('./Routes/shop');
+// const { FORCE } = require('sequelize/lib/index-hints');
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname,'public')))
 
-app.use((req, res, next) => {
-  User.findById('5baa2528563f16379fc8a610')
+app.use((req,res,next)=> {
+    User.findById('66fc32e972b823a9a2b519e8')
     .then(user => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
-      next();
+        req.user= new User(user.name, user.email, user.cart, user._id);
+        next();
     })
-    .catch(err => console.log(err));
-});
+    .catch(err => {
+        console.log(err);
+    })
+})
 
-app.use('/admin', adminRoutes);
-app.use(shopRoutes);
+app.use(routesShop);
 
-app.use(errorController.get404);
+app.use('/admin',routesAdmin.router);
 
-mongoConnect(() => {
+app.use(errorControler.get404);
+
+// sequelize
+//   .sync()
+//   // .sync()
+//   .then(result => {
+//     return User.findByPk(1);
+//     // console.log(result);
+//   })
+//   .then(user => {
+//     if (!user) {
+//       return User.create({ name: 'Max', email: 'test@test.com' });
+//     }
+//     return user;
+//   })
+//   .then(user => {
+//     const cart=user.createCart();
+//     return cart
+//   }) 
+//   .then(cart => {
+//     // console.log(user);
+//     app.listen(3000);
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
+
+mongoConnect( () => {
   app.listen(3000);
-});
+
+} )
