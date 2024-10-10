@@ -8,6 +8,7 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const errorControler = require('./controllers/error');
 const User=require('./models/user')
 const csrf = require('csurf');
+const flash = require('connect-flash')
 
 const MONGODB_URI = 'mongodb+srv://perikliev00:sztBOUCHlzp3H2Vc@cluster0.r6inv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
@@ -31,6 +32,7 @@ app.use(
     session({ secret: 'my secret', resave: false, saveUninitialized: false,store:store })
 )
 app.use(csrfProtection);
+app.use(flash());
 
 app.use((req,res,next) => {
     if(!req.session.user) {
