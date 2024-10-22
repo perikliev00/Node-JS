@@ -1,13 +1,13 @@
 const express=require('express');
 const { check,body } = require('express-validator');
 const router=express.Router();
-const authContoller = require('../controllers/auth');
+const authController = require('../controllers/auth');
 const User = require('../models/user');
 const bcrypt = require('bcryptjs')
 
-router.get('/login' ,authContoller.getLogin);
+router.get('/login' ,authController.getLogin);
 
-router.get('/signup' , authContoller.getSignup);
+router.get('/signup' , authController.getSignup);
 
 router.post('/login' , [
     body('email','Email or password is incorect')
@@ -39,17 +39,13 @@ router.post('/login' , [
         }
         return true
     })
-] ,authContoller.postLogin);
+] ,authController.postLogin);
 
 router.post('/signup', 
     [check('email','Please enter valid email.')
         .isEmail()
         .withMessage('Please enter valid email.')
         .custom((value, { req })=> {
-        //     if (value === 'test@test.com') {
-        //       throw new Error('This email address is forbidden')
-        // }
-        // return true;
         return User.findOne( {email:value} )
         .then(userDoc => {
             if(userDoc) {
@@ -69,9 +65,16 @@ router.post('/signup',
         }
         return true;
     })   
-],authContoller.postSignup)
+],authController.postSignup)
 
-router.post('/logout' ,authContoller.postLogout);
+router.post('/logout' ,authController.postLogout);
 
+router.get('/reset', authController.getReset)
+
+router.post('/reset', authController.postReset);
+
+router.get('/reset/:token', authController.getNewPassword);
+
+router.post('/new-password', authController.postNewPassword);
 
 module.exports=router;
