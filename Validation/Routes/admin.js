@@ -45,7 +45,7 @@ router.post('/edit-product',
     [
         body('title')
         .isLength({min:3})
-        .isAlphanumeric()
+        .isString()
         .trim(),
         body('imageUrl').isURL(),
         body('price')
