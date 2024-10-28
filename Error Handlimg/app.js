@@ -26,6 +26,7 @@ app.set('views','views')
 const routesAdmin=require('./Routes/admin');
 const routesShop=require('./Routes/shop');
 const routesAuth=require('./Routes/auth');
+const { error } = require('console');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname,'public')))
@@ -35,14 +36,19 @@ app.use(
 app.use(csrfProtection);
 app.use(flash());
 
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next()
+})
+
 app.use((req,res,next) => {
+    // throw new Error('Error');
     if(!req.session.user) {
         return next()
     }
     User.findById(req.session.user._id)
         .then(user => {
-            throw new Error("Dummy");
-            
             if(!user) {
                 return next();
             }
@@ -50,16 +56,9 @@ app.use((req,res,next) => {
             next();
         })
         .catch(err => { 
-            throw new Error(err);
-            
+            next(new Error(err))     
 })
 });
-
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
-    next()
-})
 
 app.use(routesShop);
 app.use('/admin',routesAdmin);
@@ -67,7 +66,13 @@ app.use(routesAuth);
 app.get('/500', errorControler.get500);
 app.use(errorControler.get404);
 app.use((error, req, res, next) => {
-    res.redirect('/500'); 
+    // res.redirect('/500'); 
+    res.status(500).render('500', { 
+        pageTitle: 'Error',
+        path: '/500',
+        isAuthenticated:req.session.isLoggedIn
+
+    })
 })
 
 mongoose
