@@ -5,11 +5,12 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const multer = require('multer');
+const csrf = require('csurf')
+const flash = require('connect-flash')
+
 
 const errorControler = require('./controllers/error');
 const User=require('./models/user')
-const csrf = require('csurf');
-const flash = require('connect-flash')
 
 const MONGODB_URI = 'mongodb+srv://perikliev00:sztBOUCHlzp3H2Vc@cluster0.r6inv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
@@ -31,6 +32,14 @@ const fileStorage = multer.diskStorage({
     }
 })
 
+const fileFilter = (req,file,cb) => {
+    if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype ==='image/jpeg') {
+        cb(null,true);
+    } else {
+        cb(null,false);
+    }
+};
+
 app.set('view engine','ejs');
 app.set('views','views')
 
@@ -40,7 +49,7 @@ const routesAuth=require('./Routes/auth');
 const { error } = require('console');
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(multer({storage: fileStorage}).single('image'));
+app.use(multer({storage: fileStorage , fileFilter:fileFilter}).single('image'));
 app.use(express.static(path.join(__dirname,'public')))
 app.use(
     session({ secret: 'my secret', resave: false, saveUninitialized: false,store:store })
