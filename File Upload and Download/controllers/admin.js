@@ -1,8 +1,6 @@
-const { validationErrors } = require('express-validator');
 const Product = require('../models/product');
 const {validationResult} = require('express-validator');
 const mongoose = require('mongoose');
-const { ConnectionCheckOutFailedEvent } = require('mongodb');
 
 exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product' , {
@@ -23,7 +21,6 @@ exports.postEditProduct = (req,res,next) => {
     const updatedDesc = req.body.description;
     const errors = validationResult(req)
     if(!errors.isEmpty()) {
-
         return res.status(422).render('admin/edit-product', {
              pageTitle: 'Edit Product',
              path: '/edit/add-product',
@@ -41,7 +38,9 @@ exports.postEditProduct = (req,res,next) => {
  
      }
     Product.findById(prodId)
-    .then(product => {        
+    .then(product => {  
+        console.log(product);  
+        console.log(product.userId);    
         if (product.userId.toString() !== req.user._id.toString()) {
             return res.redirect('/')
         }
@@ -50,12 +49,18 @@ exports.postEditProduct = (req,res,next) => {
         product.description=updatedDesc;
         if(image) {
             product.imageUrl = image.path;
-        } else {
+        }
+        else if (!image && product.imageUrl) {
+            // No new image uploaded, keep the old one
+            product.imageUrl = product.imageUrl;
+        } 
+
+        else {
              
         return res.status(422).render('admin/edit-product', {
             pageTitle: 'Edit Product',
             path: '/edit/add-product',
-            editing: false,
+            editing: true,
             hasError: true ,
             product:{
                 title:updatedTitle,
@@ -134,7 +139,7 @@ exports.postAddProduct =(req,res,next) => {
     if(!image) {
         return res.status(422).render('admin/edit-product', {
             pageTitle: 'Add Product',
-            path: '/edit/add-product',
+            path: '/admin/add-product',
             editing: false,
             hasError: true ,
             product:{
@@ -146,18 +151,18 @@ exports.postAddProduct =(req,res,next) => {
             validationErrors:[]
         });
     }
-    const errors = validationResult(req)
+
+    const errors = validationResult(req);
 
     if(!errors.isEmpty()) {
-
+        console.log(errors.array());
        return res.status(422).render('admin/edit-product', {
             pageTitle: 'Add Product',
-            path: '/edit/add-product',
+            path: '/admin/add-product',
             editing: false,
             hasError: true ,
             product:{
                 title:title,
-                imageUrl:imageUrl,
                 price:price,
                 description:description 
             },
@@ -168,7 +173,6 @@ exports.postAddProduct =(req,res,next) => {
     }
 
     const imageUrl = image.path;
-    console.log(imageUrl);
 
     const product = new Product({
         // _id: new mongoose.Types.ObjectId('670d5899efee8a2d401bb822'),
@@ -178,7 +182,6 @@ exports.postAddProduct =(req,res,next) => {
         imageUrl:imageUrl,
         userId:req.session.user._id,
     });
-    console.log(req.session);
     product
     .save()
     .then(result => {
