@@ -34,13 +34,13 @@
                 <input 
                     type="file"  
                     name="image" 
-                    id="image" > 
-                    
+                    id="image"
+                    class="<%= validationErrors.find(e => e.path === 'image') ? 'invalid' : '' %>" >
             </div>
             <div class="form-control">
                 <label for="price">Price</label>
                 <input
-                    class="<%= validationErrors.find(e => e.path === 'imageUrl') ? 'invalid' : '' %>" 
+                    class="<%= validationErrors.find(e => e.path === 'price') ? 'invalid' : '' %>" 
                     type="number" 
                     name="price" 
                     id="price" 
