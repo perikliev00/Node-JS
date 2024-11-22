@@ -152,6 +152,7 @@ exports.postAddProduct =(req,res,next) => {
     const image=req.file;
     const description=req.body.description;
     const price=req.body.price;
+    const errors = validationResult(req);
     console.log(image);
     if(!image) {
         return res.status(422).render('admin/edit-product', {
@@ -165,11 +166,9 @@ exports.postAddProduct =(req,res,next) => {
                 description:description 
             },
             errorMessage: 'Attached file is not and image',
-            validationErrors:[]
+            validationErrors:errors.array()
         });
     }
-
-    const errors = validationResult(req);
 
     if(!errors.isEmpty()) {
         console.log(errors.array());
